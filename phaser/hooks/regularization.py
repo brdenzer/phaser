@@ -75,6 +75,8 @@ class IterConstraintHook(Hook[None, IterConstraint]):
         'layers': ('phaser.engines.common.regularizers:RegularizeLayers', RegularizeLayersProps),
         'obj_low_pass': ('phaser.engines.common.regularizers:ObjLowPass', ObjLowPassProps),
         'obj_gaussian': ('phaser.engines.common.regularizers:ObjGaussian', GaussianProps),
+        'obj_phase_gaussian': ('phaser.engines.common.regularizers:ObjPhaseGaussian', GaussianProps),
+        'obj_amp_gaussian': ('phaser.engines.common.regularizers:ObjAmpGaussian', GaussianProps),
         'opr_gaussian': ('phaser.engines.common.regularizers:UnstructuredGaussian', OPRGaussianProps),
         'tilt_gaussian': ('phaser.engines.common.regularizers:UnstructuredGaussian', TiltGaussianProps),
         'remove_phase_ramp': ('phaser.engines.common.regularizers:RemovePhaseRamp', t.Dict[str, t.Any]),
@@ -87,6 +89,8 @@ class GroupConstraintHook(Hook[None, GroupConstraint]):
         'limit_probe_support': ('phaser.engines.common.regularizers:LimitProbeSupport', LimitProbeSupportProps),
         'obj_low_pass': ('phaser.engines.common.regularizers:ObjLowPass', ObjLowPassProps),
         'obj_gaussian': ('phaser.engines.common.regularizers:ObjGaussian', GaussianProps),
+        'obj_phase_gaussian': ('phaser.engines.common.regularizers:ObjPhaseGaussian', GaussianProps),
+        'obj_amp_gaussian': ('phaser.engines.common.regularizers:ObjAmpGaussian', GaussianProps),
         'remove_phase_ramp': ('phaser.engines.common.regularizers:RemovePhaseRamp', t.Dict[str, t.Any]),
     }
 

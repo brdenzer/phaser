@@ -190,6 +190,84 @@ class ObjGaussian:
         # TODO: should this be done in-place?
         sim.object.data = ifft2(state * fft2(sim.object.data))
         return (sim, state)
+    
+class ObjPhaseGaussian:
+    def __init__(self, args: None, props: GaussianProps):
+        self.sigma = props.sigma
+        self.weight = props.weight
+
+    def init_state(self, sim: ReconsState) -> NDArray[numpy.floating]:
+        samp = sim.object.sampling
+        xp = get_array_module(sim.object.data)
+        dtype = to_real_dtype(sim.object.data.dtype)
+
+        ky = xp.fft.fftfreq(samp.shape[0], samp.sampling[0]).astype(dtype)
+        kx = xp.fft.fftfreq(samp.shape[1], samp.sampling[1]).astype(dtype)
+        (ky, kx) = xp.meshgrid(ky, kx, indexing='ij')
+        k2 = ky**2 + kx**2
+
+        filt = xp.exp(-(2 * numpy.pi**2 * self.sigma**2) * k2).astype(dtype)
+        return (1. - self.weight * (1. - filt)).astype(dtype)
+
+    def apply_group(
+        self, group: NDArray[numpy.integer], sim: ReconsState, state: NDArray[numpy.floating]
+    ) -> t.Tuple[ReconsState, NDArray[numpy.floating]]:
+        return self.apply_iter(sim, state)
+
+    def apply_iter(
+        self, sim: ReconsState, state: NDArray[numpy.floating]
+    ) -> t.Tuple[ReconsState, NDArray[numpy.floating]]:
+ 
+        obj = sim.object.data
+        xp = get_array_module(obj)
+
+        amp = xp.abs(obj)
+        phase = xp.angle(obj)
+
+        phase = ifft2(state * fft2(phase))
+
+        sim.object.data = amp * xp.exp(1j * phase)
+
+        return (sim, state)
+    
+class ObjAmpGaussian:
+    def __init__(self, args: None, props: GaussianProps):
+        self.sigma = props.sigma
+        self.weight = props.weight
+
+    def init_state(self, sim: ReconsState) -> NDArray[numpy.floating]:
+        samp = sim.object.sampling
+        xp = get_array_module(sim.object.data)
+        dtype = to_real_dtype(sim.object.data.dtype)
+
+        ky = xp.fft.fftfreq(samp.shape[0], samp.sampling[0]).astype(dtype)
+        kx = xp.fft.fftfreq(samp.shape[1], samp.sampling[1]).astype(dtype)
+        (ky, kx) = xp.meshgrid(ky, kx, indexing='ij')
+        k2 = ky**2 + kx**2
+
+        filt = xp.exp(-(2 * numpy.pi**2 * self.sigma**2) * k2).astype(dtype)
+        return (1. - self.weight * (1. - filt)).astype(dtype)
+
+    def apply_group(
+        self, group: NDArray[numpy.integer], sim: ReconsState, state: NDArray[numpy.floating]
+    ) -> t.Tuple[ReconsState, NDArray[numpy.floating]]:
+        return self.apply_iter(sim, state)
+
+    def apply_iter(
+        self, sim: ReconsState, state: NDArray[numpy.floating]
+    ) -> t.Tuple[ReconsState, NDArray[numpy.floating]]:
+     
+        obj = sim.object.data
+        xp = get_array_module(obj)
+
+        amp = xp.abs(obj)
+        phase = xp.angle(obj)
+
+        amp = ifft2(state * fft2(amp))
+
+        sim.object.data = amp * xp.exp(1j * phase)
+
+        return (sim, state)
 
 
 class ObjL1:
